@@ -12,6 +12,11 @@ def load_data(filename):
 
     return a_dict1
 
+def load_data3(filename):
+    with open(filename, 'rb') as file:
+        result, doc, sents, words = pickle.load(file)
+
+    return result, doc, sents, words  
 
 def cut_data_len(data, field):
     result = []
@@ -46,12 +51,27 @@ def cut_dataset(filename):
     f.close()
     name = filename.split('.')
     for i, (train_index, test_index) in enumerate(kf.split(data)):
-        s = name[0]+str(i+1)+'.pickle'
+        s = '.'+name[1]+str(i+1)+'.pickle'
         pickle.dump((data[train_index], data[test_index]),open(s, 'wb'))
         # train_x, dev_x = data_x[:int(length*0.8)], data_x[int(length*0.8)+1 :]
         # train_y, dev_y = data_y[:int(length*0.8)], data_y[int(length*0.8)+1 :]
 
 
+def cut_dataset2(filename):
+    x_data = []
+    y_data = []
+    with open(filename, 'rb') as f:
+        kf = KFold(n_splits=5)
+        a, b = (pickle.load(f))
+        x_data = np.array(a)
+        y_data = np.array(b)
+    f.close()
+    name = filename.split('.')
+    for i, (train_index, test_index) in enumerate(kf.split(x_data)):
+        s = '.'+name[1]+str(i+1)+'.pickle'
+        pickle.dump((x_data[train_index], x_data[test_index], y_data[train_index], y_data[test_index]),open(s, 'wb'))
+        # train_x, dev_x = data_x[:int(length*0.8)], data_x[int(length*0.8)+1 :]
+        # train_y, dev_y = data_y[:int(length*0.8)], data_y[int(length*0.8)+1 :]
 
 
 def read_dataset(filename):
@@ -60,4 +80,11 @@ def read_dataset(filename):
     f.close()
     return train, test
 
+
+def read_dataset2(filename):
+    with open(filename, 'rb') as f:
+        x_train, x_test, y_train, y_test = pickle.load(f)
+        
+    f.close()
+    return x_train, x_test, y_train, y_test
 
